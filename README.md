@@ -1,10 +1,12 @@
-#Projeto ETL
-##Bruno Macedo Lemos -> -> 24005988
-## Lucas Brites
+# Projeto ETL
+## Bruno Macedo Lemos -> -> 24005988
+## Lucas Brites -> 24009893
+## Murilo -> 24012855
+## João Mucci
 Esta é uma aplicação em Go que implementa um processo ETL (Extract, Transform, Load) para uma plataforma de e-commerce focada em ferramentas industriais. Ela gerencia clientes, ferramentas e pedidos, armazenando dados transacionais em um banco de dados PostgreSQL (ecommerce_ferramentas) e consolidando os dados em um data warehouse (dw_ferramentas). A aplicação utiliza o roteador Gorilla Mux e o driver PostgreSQL.
 Recursos
 
-#Rotas existentes
+# Rotas existentes
 
 ### Criação e autenticação dos clientes (/criar-conta, /login)
 ### Gerenciar produtos da ferramentaria (/adicionar-ferramenta, /listar-ferramentas, /atualizar-ferramenta)
@@ -12,7 +14,8 @@ Recursos
 ### Processos ETL para sincronizar dados com o data warehouse
 
 Estrutura do projeto
-```etl_project/
+```
+etl_project/
 ├── main.go
 ├── database/
 ├── └── database.go
@@ -21,9 +24,10 @@ Estrutura do projeto
 ├── etl/
 │   └── etl.go
 ├── go.mod
-├── go.sum```
+├── go.sum
+```
 
-Passo a Passo para Testar a Aplicação
+# Passo a Passo para Testar a Aplicação
 Siga estas instruções para configurar e testar a aplicação localmente.
 1. Clonar o Repositório
 
@@ -50,7 +54,8 @@ Para dw_ferramentas:psql -U postgres -d dw_ferramentas -f schema_dw.sql
 
 Crie as tabelas
 para o Banco -> ecommerce_ferramentas
-```CREATE TABLE clientes (
+```
+CREATE TABLE clientes (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -91,11 +96,13 @@ CREATE TABLE itens_pedido (
     produto_id INTEGER REFERENCES produtos(id),
     quantidade INTEGER NOT NULL,
     preco_unitario DECIMAL(10, 2) NOT NULL
-);```
+);
+```
 
 para o banco -> dw_ferramentas
 
-```CREATE TABLE pedidos_faturados (
+```
+CREATE TABLE pedidos_faturados (
     id SERIAL PRIMARY KEY,
     pedido_id INTEGER NOT NULL,
     cliente_nome VARCHAR(100) NOT NULL,
@@ -138,7 +145,8 @@ CREATE TABLE ferramentas_atualizadas (
     marca VARCHAR(50),
     dimensoes VARCHAR(50),
     data_atualizacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);```
+);
+```
 
 
 c. Verificar Credenciais
@@ -153,53 +161,23 @@ Você verá:
 Servidor rodando na porta 8080...
 
 5. Testar as Rotas da API
+### Criação e autenticação dos clientes (/criar-conta, /login)
+## POST
+curl.exe -X POST http://localhost:8080/criar-conta -H "Content-Type: application/json" -d '{"nome":"Bruno Macedo","email":"bruno@exemplo.com","senha":"123456"}'
+curl.exe -X POST http://localhost:8080/login -H "Content-Type: application/json" -d '{"email":"bruno@exemplo.com","senha":"123456"}'
 
-a. Executar o Script de Teste
-No PowerShell, dentro do diretório etl_project:
-.\test_api.ps1
-
-O script testa as seguintes rotas:
-
-POST /criar-conta: Cria um cliente.
-POST /login: Autentica o cliente.
-POST /adicionar-ferramenta: Adiciona uma ferramenta.
-GET /listar-ferramentas: Lista ferramentas.
-PUT /atualizar-ferramenta: Atualiza uma ferramenta.
-POST /faturar-pedido: Cria um pedido.
-
-b. Comandos Individuais
-Se preferir testar manualmente:
-
-Criar Conta:
-curl.exe -X POST http://localhost:8080/criar-conta -H "Content-Type: application/json" -d '{"nome":"Joao Silva","email":"joao@exemplo.com","senha":"123456"}'
-
-Resposta esperada: Cliente criado com ID: 1
-
-Login:
-curl.exe -X POST http://localhost:8080/login -H "Content-Type: application/json" -d '{"email":"joao@exemplo.com","senha":"123456"}'
-
-Resposta esperada: Login bem-sucedido! Cliente ID: 1
-
-Adicionar Ferramenta:
+### Gerenciar produtos da ferramentaria (/adicionar-ferramenta, /listar-ferramentas, /atualizar-ferramenta)
+## POST
 curl.exe -X POST http://localhost:8080/adicionar-ferramenta -H "Content-Type: application/json" -d '{"nome":"Martelo Stanley","descricao":"Martelo de garra 500g","preco":49.90,"estoque":100,"categoria":"Ferramentas Manuais","material":"Aco","marca":"Stanley","dimensoes":"30x5x3 cm"}'
-
-Resposta esperada: Ferramenta adicionada com ID: 1
-
-Listar Ferramentas:
+## GET
 curl.exe -X GET http://localhost:8080/listar-ferramentas
-
-Resposta esperada: JSON com a lista de ferramentas.
-
-Atualizar Ferramenta:
+## PUT
 curl.exe -X PUT http://localhost:8080/atualizar-ferramenta -H "Content-Type: application/json" -d '{"id":1,"nome":"Martelo Stanley","descricao":"Martelo de garra 500g atualizado","preco":59.90,"estoque":80,"categoria":"Ferramentas Manuais","material":"Aco","marca":"Stanley","dimensoes":"30x5x3 cm"}'
 
-Resposta esperada: Ferramenta com ID 1 atualizada
 
-Faturar Pedido:
+### Venda do produto (/faturar-pedido)
+## POST
 curl.exe -X POST http://localhost:8080/faturar-pedido -H "Content-Type: application/json" -d '{"cliente_id":1,"itens":[{"produto_id":1,"quantidade":2,"preco":59.90}]}'
-
-Resposta esperada: Pedido faturado com ID: 1
-
 
 6. Verificar os Dados no Banco
 Use o pgAdmin 4 ou psql para verificar os dados após os testes.
@@ -215,38 +193,3 @@ b. Data Warehouse (dw_ferramentas)
 SELECT * FROM pedidos_faturados;       -- Pedido consolidado
 SELECT * FROM ferramentas_adicionadas; -- Ferramenta adicionada
 SELECT * FROM ferramentas_atualizadas; -- Ferramenta atualizada
-
-7. Solucionar Problemas
-
-Erro ao decodificar JSON:
-Verifique a sintaxe JSON nos comandos curl.
-Use Postman para testar as rotas.
-Adicione logs no servidor (edite handlers/handlers.go para logar o corpo da requisição).
-
-
-Erro de Conexão com Banco:
-Confirme que o PostgreSQL está rodando (netstat -ano | findstr :5432).
-Verifique as credenciais em handlers/handlers.go.
-
-
-Tabelas Não Existem:
-Reaplique os scripts schema_ecommerce.sql e schema_dw.sql.
-
-
-Erro 500:
-Consulte os logs do servidor no terminal do go run main.go.
-
-
-
-8. Limpar o Banco para Novos Testes
-Para recomeçar os testes, limpe os bancos:
-\c ecommerce_ferramentas
-DROP TABLE itens_pedido, pedidos, produtos, clientes CASCADE;
-\c dw_ferramentas
-DROP TABLE pedidos_faturados, ferramentas_adicionadas, ferramentas_atualizadas CASCADE;
-
-Reaplique os schemas (passo 3b).
-Contributing
-Feel free to open issues or submit pull requests to improve the project.
-License
-This project is licensed under the MIT License.
