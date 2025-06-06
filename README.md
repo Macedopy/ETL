@@ -1,8 +1,8 @@
 # Projeto ETL
-## Bruno Macedo Lemos -> -> 24005988
+## Bruno Macedo Lemos -> 24005988
 ## Lucas Brites -> 24009893
 ## Murilo -> 24012855
-## João Mucci
+## João Mucci -> 24008202
 Esta é uma aplicação em Go que implementa um processo ETL (Extract, Transform, Load) para uma plataforma de e-commerce focada em ferramentas industriais. Ela gerencia clientes, ferramentas e pedidos, armazenando dados transacionais em um banco de dados PostgreSQL (ecommerce_ferramentas) e consolidando os dados em um data warehouse (dw_ferramentas). A aplicação utiliza o roteador Gorilla Mux e o driver PostgreSQL.
 Recursos
 
